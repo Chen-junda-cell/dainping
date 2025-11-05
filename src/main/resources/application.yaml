@@ -1,0 +1,27 @@
+server:
+  port: 8081
+spring:
+  application:
+    name: hmdp
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/hmdp?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&useSSL=false
+    username: root
+    password: 123456
+
+  jackson:
+    default-property-inclusion: non_null # JSON处理时忽略非空字段
+  data:
+    redis:
+      host: 127.0.0.1   # 如果 Redis 在本机，就写 localhost 或 127.0.0.1
+      port: 6379        # 你日志里显示的端口
+      password:         # 如果没设置密码就留空
+      database: 0       # 默认数据库是 0
+
+mybatis-plus:
+  type-aliases-package: com.hmdp.entity # 别名扫描包
+logging:
+  level:
+    com.hmdp: debug
+  pattern:
+    dateformat: mm:ss.SSS
