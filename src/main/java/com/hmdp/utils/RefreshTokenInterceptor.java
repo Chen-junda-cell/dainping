@@ -25,26 +25,36 @@ public class RefreshTokenInterceptor implements HandlerInterceptor {
     }
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        //1.获取token，并且如果token为空说明是公共接口直接放行
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+        // 1. 获取 token
         String token = request.getHeader("authorization");
         if (StrUtil.isBlank(token)) {
             return true;
         }
-        //2，获取token中的map集合，如果是空，说明是无效token，直接放行
+
+        // 2. 获取 Redis 用户信息
         String key = LOGIN_USER_KEY + token;
         Map<Object, Object> userMap = stringRedisTemplate.opsForHash().entries(key);
-        if (userMap == null) {
+
+        // 3. map 为空则说明未登录
+        if (userMap.isEmpty()) {
             return true;
         }
-        //3，将获得的map保存到threadload里面，然后刷新token有效期，然后放行
+
+        // 4. 转为 DTO
         UserDTO userDTO = BeanUtil.fillBeanWithMap(userMap, new UserDTO(), false);
+
+        // 5. 保存到 ThreadLocal
         UserHolder.saveUser(userDTO);
+
+        // 6. 刷新 token 有效期
         stringRedisTemplate.expire(key, LOGIN_CODE_TTL, TimeUnit.MINUTES);
+
         return true;
     }
 
     @Override
-    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
+        UserHolder.removeUser();
     }
 }

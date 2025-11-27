@@ -21,4 +21,6 @@ public class RedisConstants {
     public static final String FEED_KEY = "feed:";
     public static final String SHOP_GEO_KEY = "shop:geo:";
     public static final String USER_SIGN_KEY = "sign:";
+    public static final String SECKILL_VOUCHER_ORDER = "seckill:voucher:order:";
+    public static final String LOCK_ORDER_KEY = "lock:order:";
 }
